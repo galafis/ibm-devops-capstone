@@ -1,0 +1,5 @@
+flask>=2.3.0
+docker>=6.1.0
+kubernetes>=27.2.0
+pyyaml>=6.0
+schedule>=1.2.0
