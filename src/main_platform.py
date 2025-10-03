@@ -13,135 +13,14 @@ import sqlite3
 import numpy as np
 import logging
 
+from devops_platform import DevOpsPlatform, MachineLearningEngine, AnalyticsEngine # Importar as novas classes
+
 # Configure logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-class DevOpsPlatform:
-    """Main platform class for DevOps"""
-    
-    def __init__(self):
-        self.db_path = "platform.db"
-        self.init_database()
-        logger.info(f"DevOps platform initialized")
-    
-    def init_database(self):
-        """Initialize SQLite database"""
-        conn = sqlite3.connect(self.db_path)
-        cursor = conn.cursor()
-        
-        # Create main data table
-        cursor.execute("""
-            CREATE TABLE IF NOT EXISTS platform_data (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                name TEXT NOT NULL,
-                category TEXT NOT NULL,
-                value REAL NOT NULL,
-                status TEXT DEFAULT 'active',
-                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-            )
-        """)
-        
-        # Create metrics table
-        cursor.execute("""
-            CREATE TABLE IF NOT EXISTS platform_metrics (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                metric_name TEXT NOT NULL,
-                metric_value REAL NOT NULL,
-                metric_date DATE NOT NULL,
-                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-            )
-        """)
-        
-        conn.commit()
-        conn.close()
-        logger.info("Database initialized successfully")
-    
-    def generate_sample_data(self, num_records=1000):
-        """Generate sample data for demonstration"""
-        conn = sqlite3.connect(self.db_path)
-        cursor = conn.cursor()
-        
-        # Clear existing data
-        cursor.execute("DELETE FROM platform_data")
-        cursor.execute("DELETE FROM platform_metrics")
-        
-        # Generate sample records
-        categories = ['Category A', 'Category B', 'Category C', 'Category D', 'Category E']
-        statuses = ['active', 'inactive', 'pending']
-        
-        for i in range(num_records):
-            name = f"Item {i+1:04d}"
-            category = np.random.choice(categories)
-            value = np.random.uniform(10, 1000)
-            status = np.random.choice(statuses, p=[0.7, 0.2, 0.1])
-            
-            cursor.execute("""
-                INSERT INTO platform_data (name, category, value, status)
-                VALUES (?, ?, ?, ?)
-            """, (name, category, value, status))
-        
-        # Generate metrics data
-        base_date = datetime.now() - timedelta(days=30)
-        for i in range(30):
-            date = base_date + timedelta(days=i)
-            
-            # Generate various metrics
-            metrics = [
-                ('total_users', np.random.randint(100, 1000)),
-                ('active_sessions', np.random.randint(50, 500)),
-                ('revenue', np.random.uniform(1000, 10000)),
-                ('conversion_rate', np.random.uniform(0.1, 0.3)),
-                ('performance_score', np.random.uniform(0.7, 1.0))
-            ]
-            
-            for metric_name, metric_value in metrics:
-                cursor.execute("""
-                    INSERT INTO platform_metrics (metric_name, metric_value, metric_date)
-                    VALUES (?, ?, ?)
-                """, (metric_name, metric_value, date.date()))
-        
-        conn.commit()
-        conn.close()
-        logger.info(f"Generated {num_records} sample records and 30 days of metrics")
-    
-    def get_data(self):
-        """Get all platform data"""
-        conn = sqlite3.connect(self.db_path)
-        df = pd.read_sql_query("SELECT * FROM platform_data", conn)
-        conn.close()
-        return df
-    
-    def get_metrics(self):
-        """Get platform metrics"""
-        conn = sqlite3.connect(self.db_path)
-        df = pd.read_sql_query("SELECT * FROM platform_metrics", conn)
-        conn.close()
-        return df
-    
-    def calculate_kpis(self):
-        """Calculate key performance indicators"""
-        data = self.get_data()
-        metrics = self.get_metrics()
-        
-        if data.empty:
-            return {}
-        
-        kpis = {
-            'total_records': len(data),
-            'active_records': len(data[data['status'] == 'active']),
-            'total_value': data['value'].sum(),
-            'average_value': data['value'].mean(),
-            'categories': data['category'].nunique(),
-            'latest_update': data['updated_at'].max() if not data.empty else None
-        }
-        
-        if not metrics.empty:
-            latest_metrics = metrics.groupby('metric_name')['metric_value'].last()
-            kpis.update(latest_metrics.to_dict())
-        
-        return kpis
+# A classe DevOpsPlatform foi movida para devops_platform.py
+# As classes MachineLearningEngine e AnalyticsEngine também foram movidas para devops_platform.py
 
 def create_dashboard():
     """Create Streamlit dashboard"""
@@ -154,8 +33,10 @@ def create_dashboard():
     st.title("📊 DevOps Platform Dashboard")
     st.markdown("---")
     
-    # Initialize platform
+    # Initialize platforms
     platform = DevOpsPlatform()
+    ml_engine = MachineLearningEngine()
+    analytics_engine = AnalyticsEngine()
     
     # Sidebar
     st.sidebar.title("🔧 Platform Controls")
@@ -180,16 +61,16 @@ def create_dashboard():
     col1, col2, col3, col4 = st.columns(4)
     
     with col1:
-        st.metric("Total Records", kpis.get('total_records', 0))
+        st.metric("Total Records", kpis.get("total_records", 0))
     
     with col2:
-        st.metric("Active Records", kpis.get('active_records', 0))
+        st.metric("Active Records", kpis.get("active_records", 0))
     
     with col3:
-        st.metric("Total Value", f"${kpis.get('total_value', 0):,.2f}")
+        st.metric("Total Value", f"${kpis.get("total_value", 0):,.2f}")
     
     with col4:
-        st.metric("Average Value", f"${kpis.get('average_value', 0):,.2f}")
+        st.metric("Average Value", f"${kpis.get("average_value", 0):,.2f}")
     
     # Charts
     st.subheader("📊 Data Visualizations")
@@ -198,7 +79,7 @@ def create_dashboard():
     
     with col1:
         # Category distribution
-        category_counts = data['category'].value_counts()
+        category_counts = data["category"].value_counts()
         fig_pie = px.pie(
             values=category_counts.values,
             names=category_counts.index,
@@ -208,7 +89,7 @@ def create_dashboard():
     
     with col2:
         # Status distribution
-        status_counts = data['status'].value_counts()
+        status_counts = data["status"].value_counts()
         fig_bar = px.bar(
             x=status_counts.index,
             y=status_counts.values,
@@ -220,20 +101,75 @@ def create_dashboard():
     if not metrics.empty:
         st.subheader("📈 Metrics Over Time")
         
-        metric_options = metrics['metric_name'].unique()
+        metric_options = metrics["metric_name"].unique()
         selected_metric = st.selectbox("Select Metric", metric_options)
         
-        metric_data = metrics[metrics['metric_name'] == selected_metric]
-        metric_data['metric_date'] = pd.to_datetime(metric_data['metric_date'])
+        metric_data = metrics[metrics["metric_name"] == selected_metric]
+        metric_data["metric_date"] = pd.to_datetime(metric_data["metric_date"])
         
         fig_line = px.line(
             metric_data,
-            x='metric_date',
-            y='metric_value',
-            title=f"{selected_metric.replace('_', ' ').title()} Over Time"
+            x="metric_date",
+            y="metric_value",
+            title=f"{selected_metric.replace("_", " ").title()} Over Time"
         )
         st.plotly_chart(fig_line, use_container_width=True)
     
+    # Machine Learning Section
+    st.subheader("🤖 Machine Learning Insights")
+    if not data.empty and len(data["category"].unique()) > 1:
+        st.write("Demonstrando um modelo de Machine Learning para classificação de dados.")
+        
+        # Preparar dados para ML
+        # Para simplificar, vamos usar 'value' como feature e 'category' como target
+        # Em um cenário real, mais features seriam usadas e pré-processamento seria mais complexo
+        X = data[["value"]]
+        # Converter categorias para numérico para o modelo
+        y = data["category"].astype("category").cat.codes
+        
+        if len(X) > 1 and len(y.unique()) > 1: # Garante que há dados suficientes para treinar
+            try:
+                model = ml_engine.train_model(X, y)
+                st.success("Modelo de Machine Learning treinado com sucesso!")
+                
+                # Exemplo de previsão
+                sample_value = st.slider("Valor para Previsão", float(data["value"].min()), float(data["value"].max()), float(data["value"].mean()))
+                sample_df = pd.DataFrame({"value": [sample_value]})
+                prediction_code = ml_engine.make_predictions(model, sample_df)
+                predicted_category = data["category"].astype("category").cat.categories[prediction_code[0]]
+                st.info(f"Para o valor {sample_value:.2f}, a categoria prevista é: **{predicted_category}**")
+            except Exception as e:
+                st.error(f"Erro ao treinar ou prever com o modelo ML: {e}")
+        else:
+            st.warning("Dados insuficientes para treinar o modelo de Machine Learning. Necessita de mais de uma categoria e mais de um registro.")
+    else:
+        st.info("Gere dados de exemplo para habilitar a demonstração de Machine Learning.")
+
+    # Analytics Engine Section
+    st.subheader("📈 Advanced Analytics Engine")
+    if not data.empty:
+        st.write("Análise de tendências e padrões nos dados.")
+        try:
+            # Para a análise de tendências, precisamos de uma coluna de data. Usaremos 'created_at' e 'value'.
+            data["created_at"] = pd.to_datetime(data["created_at"])
+            trends_data = data.rename(columns={"created_at": "date"})
+            trends, patterns = analytics_engine.analyze_trends(trends_data[["date", "value"]])
+            
+            if trends is not None and not trends.empty:
+                st.success("Análise de tendências realizada com sucesso!")
+                st.write("**Tendências de Valor ao Longo do Tempo (Média Diária):**")
+                fig_trends = px.line(trends["value"]["mean"].reset_index(), x="date", y="mean", title="Média de Valor por Data")
+                st.plotly_chart(fig_trends, use_container_width=True)
+                
+                st.write("**Padrões Identificados:**")
+                st.json(patterns)
+            else:
+                st.warning("Não foi possível gerar tendências ou padrões com os dados disponíveis.")
+        except Exception as e:
+            st.error(f"Erro ao executar a análise de tendências: {e}")
+    else:
+        st.info("Gere dados de exemplo para habilitar a demonstração do Analytics Engine.")
+
     # Data table
     st.subheader("📋 Data Table")
     st.dataframe(data, use_container_width=True)
@@ -274,3 +210,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
