@@ -16,7 +16,7 @@ import psutil
 import logging
 
 # Add src to path
-sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'src'))
+sys.path.append(os.path.join(os.path.dirname(__file__), '..', '..', 'src'))
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -25,7 +25,6 @@ class PerformanceTest:
     """Performance testing suite for the platform"""
     
     def __init__(self):
-        self.base_url = "http://localhost:8501"
         self.db_path = "platform.db"
         self.results = {}
     
@@ -303,7 +302,7 @@ class PerformanceTest:
         print("✅ PERFORMANCE TEST COMPLETED")
         print("="*60)
 
-def main():
+def test_performance():
     """Main function to run performance tests"""
     print("🚀 Starting DevOps Platform Performance Tests")
     
@@ -311,5 +310,3 @@ def main():
     perf_test = PerformanceTest()
     perf_test.run_all_tests()
 
-if __name__ == "__main__":
-    main()
