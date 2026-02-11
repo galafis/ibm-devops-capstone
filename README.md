@@ -11,7 +11,6 @@
 
 ### 🚀 Visão Geral do Projeto
 
-Este projeto é o trabalho final do **IBM DevOps & Software Engineering Professional Certificate**, desenvolvido por Gabriel Demetrios Lafis. Ele demonstra competências avançadas em DevOps, integração contínua (CI), entrega contínua (CD) e engenharia de software. A plataforma desenvolvida oferece uma solução completa com um pipeline CI/CD robusto, containerização e automação de deployment, focando na entrega de valor através de uma aplicação de análise de dados interativa.
 
 ### ✨ Características Principais
 
@@ -47,7 +46,6 @@ Este projeto utiliza uma combinação de tecnologias modernas para garantir esca
 | **Machine Learning** | Scikit-learn | 1.3+ | Implementação de algoritmos de aprendizado de máquina |
 | **Containerização** | Docker | Latest | Empacotamento da aplicação e suas dependências |
 | **Orquestração** | Kubernetes | Latest | Gerenciamento e escalabilidade de containers (conceitual) |
-| **CI/CD** | Jenkins | Latest | Automação de testes e deployment (conceitual) |
 
 ### 🏗️ Arquitetura da Solução
 
@@ -62,9 +60,7 @@ graph TD
     D -->|Utiliza| F[Módulos de Analytics/ML - Pandas, Scikit-learn]
     D -->|Gera| G[Visualizações - Plotly]
     G --> B
-    subgraph Pipeline CI/CD
         H[Desenvolvimento] --> I(Git)
-        I --> J(Jenkins - CI/CD)
         J --> K(Docker - Containerização)
         K --> L(Kubernetes - Orquestração)
     end
@@ -335,7 +331,6 @@ Este projeto está licenciado sob a [MIT License](LICENSE) - veja o arquivo `LIC
 
 ### 🚀 Project Overview
 
-This project is the capstone work for the **IBM DevOps & Software Engineering Professional Certificate**, developed by Gabriel Demetrios Lafis. It demonstrates advanced competencies in DevOps, Continuous Integration (CI), Continuous Delivery (CD), and software engineering. The developed platform offers a comprehensive solution with a robust CI/CD pipeline, containerization, and automated deployment, focusing on delivering value through an interactive data analysis application.
 
 ### ✨ Key Features
 
@@ -371,7 +366,6 @@ This project utilizes a combination of modern technologies to ensure scalability
 | **Machine Learning** | Scikit-learn | 1.3+ | Implementing machine learning algorithms |
 | **Containerization** | Docker | Latest | Packaging the application and its dependencies |
 | **Orchestration** | Kubernetes | Latest | Managing and scaling containers (conceptual) |
-| **CI/CD** | Jenkins | Latest | Automating tests and deployment (conceptual) |
 
 ### 🏗️ Solution Architecture
 
@@ -386,9 +380,7 @@ graph TD
     D -->|Utilizes| F[Analytics/ML Modules - Pandas, Scikit-learn]
     D -->|Generates| G[Visualizations - Plotly]
     G --> B
-    subgraph CI/CD Pipeline
         H[Development] --> I(Git)
-        I --> J(Jenkins - CI/CD)
         J --> K(Docker - Containerization)
         K --> L(Kubernetes - Orchestration)
     end
